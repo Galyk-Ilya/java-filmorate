@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserControllerTest {
-    List<User> users;
-    UserController controller;
+    private List<User> users;
+    private UserController controller;
 
     @BeforeEach
     public void createControllerAndUsersForTests() {
@@ -83,11 +83,11 @@ public class UserControllerTest {
                 exceptionTestUpdate(6).getMessage());
     }
 
-    public InputDataException exceptionTestAddition(int listNumber) {
+    private InputDataException exceptionTestAddition(int listNumber) {
         return assertThrows(InputDataException.class, () -> controller.create(users.get(listNumber)));
     }
 
-    public InputDataException exceptionTestUpdate(int listNumber) {
+    private InputDataException exceptionTestUpdate(int listNumber) {
         return assertThrows(InputDataException.class, () -> controller.update(users.get(listNumber)));
     }
 }

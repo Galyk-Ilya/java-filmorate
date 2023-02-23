@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FilmControllerTest {
-    FilmController controller;
-    List<Film> films;
+    private FilmController controller;
+    private List<Film> films;
 
     @BeforeEach
     public void createForTests() {
@@ -95,11 +95,11 @@ public class FilmControllerTest {
                 exceptionTestUpdate(6).getMessage());
     }
 
-    public InputDataException exceptionTestAddition(int listNumber) {
+    private InputDataException exceptionTestAddition(int listNumber) {
         return assertThrows(InputDataException.class, () -> controller.create(films.get(listNumber)));
     }
 
-    public InputDataException exceptionTestUpdate(int listNumber) {
+    private InputDataException exceptionTestUpdate(int listNumber) {
         return assertThrows(InputDataException.class, () -> controller.update(films.get(listNumber)));
     }
 }
