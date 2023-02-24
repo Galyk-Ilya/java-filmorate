@@ -25,7 +25,7 @@ public class User extends Model {
     private String email;
     private String login;
 
- //   @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
 
@@ -37,16 +37,16 @@ public class User extends Model {
 //        this.birthday = birthday;
 //    }
 
-    public User(int id, String email, String name, String login, String birthday) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-        this.login = login;
-        parseLocalDate(birthday);
-    }
+//    public User(int id, String email, String name, String login, String birthday) {
+//        this.id = id;
+//        this.email = email;
+//        this.name = name;
+//        this.login = login;
+//        parseLocalDate(birthday);
+//    }
 
-    private void parseLocalDate(String birthdayString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        this.birthday = LocalDate.parse(birthdayString, formatter);
-    }
+//    private void parseLocalDate(String birthdayString) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        this.birthday = LocalDate.parse(birthdayString, formatter);
+//    }
 }
