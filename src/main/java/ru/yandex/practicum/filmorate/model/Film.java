@@ -16,10 +16,9 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor(force = true)
-@RequiredArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Film extends Model {
     protected String name;
     private String description;

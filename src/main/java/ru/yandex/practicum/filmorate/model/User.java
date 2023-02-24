@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -16,10 +15,10 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor(force = true)
-@RequiredArgsConstructor
+@AllArgsConstructor
+@ToString
+
 
 public class User extends Model {
     protected String name;
@@ -37,6 +36,7 @@ public class User extends Model {
         this.login = login;
         this.birthday = birthday;
     }
+
     public User(int id, String email, String name, String login, String birthday) {
         this.id = id;
         this.email = email;
