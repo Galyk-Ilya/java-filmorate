@@ -23,6 +23,8 @@ public class Film extends Model {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private long duration;
+    protected String name;
+
 
     public Film(int id, String description, String name, LocalDate releaseDate, long duration) {
         this.id = id;

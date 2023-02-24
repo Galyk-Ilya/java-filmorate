@@ -27,9 +27,9 @@ public abstract class Controller<T extends Model> {
     @PutMapping
     public T update(T data) {
         if (!dataMap.containsKey(data.getId())) {
-            throw new InputDataException("Unable to update " + data.getName() + " has not been added before");
+            throw new InputDataException("Unable to update id" + data.getId() + " has not been added before");
         }
-        log.debug(data.getName() + ", id" + data.getId() + " updated");
+        log.debug("id" + data.getId() + " updated");
         validate(data);
         dataMap.put(data.getId(), data);
         return data;

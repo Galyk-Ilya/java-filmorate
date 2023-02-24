@@ -84,7 +84,7 @@ public class UserControllerTest {
         users.get(6).setName("nameUpdateTest");
         assertEquals("nameUpdateTest", controller.update(users.get(6)).getName());
         users.get(6).setId(100);
-        assertEquals("Unable to update nameUpdateTest" + " has not been added before",
+        assertEquals("Unable to update id100 has not been added before",
                 exceptionTestUpdate(6).getMessage());
     }
 

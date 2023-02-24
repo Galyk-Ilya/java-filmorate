@@ -89,7 +89,7 @@ public class FilmControllerTest {
         films.get(0).setName("nameUpdateTest");
         assertEquals("nameUpdateTest", controller.update(films.get(0)).getName());
         films.get(6).setId(100);
-        assertEquals("Unable to update Властелин колец has not been added before",
+        assertEquals("Unable to update id100 has not been added before",
                 exceptionTestUpdate(6).getMessage());
     }
 

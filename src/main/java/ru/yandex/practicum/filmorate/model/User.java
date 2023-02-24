@@ -23,6 +23,8 @@ public class User extends Model {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
+    protected String name;
+
 
     public User(int id, String email, String name, String login, LocalDate birthday) {
         this.id = id;

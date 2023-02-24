@@ -12,6 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public abstract class Model {
-    int id;
-    String name;
+
+
+    protected int id;
 }
