@@ -9,6 +9,5 @@ import lombok.ToString;
 @ToString
 public abstract class Model {
 
-
     protected int id;
 }

@@ -8,10 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -20,32 +18,10 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 @ToString
 public class Film extends Model {
-    protected String name;
+
     private String description;
+    protected String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private long duration;
-
-
-//    public Film(int id, String description, String name, LocalDate releaseDate, long duration) {
-//        this.id = id;
-//        this.description = description;
-//        this.name = name;
-//        this.duration = duration;
-//        this.releaseDate = releaseDate;
-//    }
-
-//    public Film(int id, String description, String name, String releaseDate, long duration) {
-//        this.id = id;
-//        this.description = description;
-//        this.name = name;
-//        this.duration = duration;
-//        parseLocalDate(releaseDate);
-//    }
-//
-//    private void parseLocalDate(String birthdayString) {
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        this.releaseDate = LocalDate.parse(birthdayString, formatter);
-//    }
-
 }
