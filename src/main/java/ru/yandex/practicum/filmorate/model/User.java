@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -16,14 +18,15 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 
 public class User extends Model {
+    protected String name;
     private String email;
     private String login;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
-    protected String name;
 
 
     public User(int id, String email, String name, String login, LocalDate birthday) {

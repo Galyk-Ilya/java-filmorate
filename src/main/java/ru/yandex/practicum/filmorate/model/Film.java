@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -17,13 +18,13 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 public class Film extends Model {
-
+    protected String name;
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private long duration;
-    protected String name;
 
 
     public Film(int id, String description, String name, LocalDate releaseDate, long duration) {
