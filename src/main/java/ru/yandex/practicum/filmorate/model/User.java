@@ -25,17 +25,17 @@ public class User extends Model {
     private String email;
     private String login;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+ //   @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
 
-    public User(int id, String email, String name, String login, LocalDate birthday) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-        this.login = login;
-        this.birthday = birthday;
-    }
+//    public User(int id, String email, String name, String login, LocalDate birthday) {
+//        this.id = id;
+//        this.email = email;
+//        this.name = name;
+//        this.login = login;
+//        this.birthday = birthday;
+//    }
 
     public User(int id, String email, String name, String login, String birthday) {
         this.id = id;
