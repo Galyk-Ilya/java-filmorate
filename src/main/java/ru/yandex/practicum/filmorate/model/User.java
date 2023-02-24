@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -35,5 +36,17 @@ public class User extends Model {
         this.name = name;
         this.login = login;
         this.birthday = birthday;
+    }
+    public User(int id, String email, String name, String login, String birthday) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.login = login;
+        parseLocalDate(birthday);
+    }
+
+    private void parseLocalDate(String birthdayString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        this.birthday = LocalDate.parse(birthdayString, formatter);
     }
 }

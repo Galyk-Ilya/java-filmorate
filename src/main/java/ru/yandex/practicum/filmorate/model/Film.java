@@ -11,6 +11,7 @@ import lombok.ToString;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -34,4 +35,18 @@ public class Film extends Model {
         this.duration = duration;
         this.releaseDate = releaseDate;
     }
+
+    public Film(int id, String description, String name, String releaseDate, long duration) {
+        this.id = id;
+        this.description = description;
+        this.name = name;
+        this.duration = duration;
+        parseLocalDate(releaseDate);
+    }
+
+    private void parseLocalDate(String birthdayString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        this.releaseDate = LocalDate.parse(birthdayString, formatter);
+    }
+
 }
