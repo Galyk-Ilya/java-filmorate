@@ -38,7 +38,7 @@ public class UserControllerTest {
         controller.create(users.get(0));
         assertEquals(1, controller.entities.size());
         assertEquals("Date of birth cannot be in the future",
-                exceptionTestAddition(users, 5).getMessage());
+                assertThrows(InputDataException.class, () -> controller.create(users.get(5))).getMessage());
         controller.create(users.get(6));
         assertEquals("Xcaz", controller.entities.get(2).getName());
         assertEquals(2, controller.entities.size());
@@ -60,10 +60,6 @@ public class UserControllerTest {
         users.get(6).setId(100);
         assertEquals("Unable to update id100 has not been added before",
                 exceptionTestUpdate(users, 6).getMessage());
-    }
-
-    private InputDataException exceptionTestAddition(List<User> users, int listNumber) {
-        return assertThrows(InputDataException.class, () -> controller.create(users.get(listNumber)));
     }
 
     private InputDataException exceptionTestUpdate(List<User> users, int listNumber) {
