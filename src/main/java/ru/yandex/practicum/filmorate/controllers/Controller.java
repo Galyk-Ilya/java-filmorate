@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.InputDataException;
 import ru.yandex.practicum.filmorate.model.Model;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -18,7 +19,7 @@ public abstract class Controller<T extends Model> {
     private int counter = 0;
 
     @PostMapping
-    public T create(@RequestBody T entity) {
+    public T create(@Valid @RequestBody T entity) {
         validate(entity);
         entity.setId(++counter);
         entities.put(entity.getId(), entity);
@@ -27,7 +28,7 @@ public abstract class Controller<T extends Model> {
     }
 
     @PutMapping
-    public T update(@RequestBody T entity) {
+    public T update(@Valid @RequestBody T entity) {
         if (!entities.containsKey(entity.getId())) {
             throw new InputDataException("Unable to update id" + entity.getId() + " has not been added before");
         }

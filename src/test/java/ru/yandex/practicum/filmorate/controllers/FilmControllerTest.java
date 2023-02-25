@@ -37,16 +37,11 @@ public class FilmControllerTest {
         assertEquals(0, controller.entities.size());
         controller.create(films.get(0));
         assertEquals(1, controller.entities.size());
-        assertEquals("Movie title cannot be empty",
-                exceptionTestAddition(films, 1).getMessage());
+
         assertEquals(films.get(2), controller.create(films.get(2)));
         assertEquals(films.get(3), controller.create(films.get(3)));
-        assertEquals("The maximum description length is 200 characters",
-                exceptionTestAddition(films, 4).getMessage());
         assertEquals("The release date must be - no earlier than December 28, 1895",
-                exceptionTestAddition(films, 5).getMessage());
-        assertEquals("Movie duration must be positive",
-                exceptionTestAddition(films, 6).getMessage());
+                assertThrows(InputDataException.class, () -> controller.create(films.get(5))).getMessage());
         assertEquals(3, controller.entities.size());
     }
 
@@ -56,25 +51,16 @@ public class FilmControllerTest {
         assertEquals(0, controller.entities.size());
         films.forEach(film -> film.setId(1));
         controller.entities.put(1, films.get(0));
-        assertEquals("Movie title cannot be empty", exceptionTestUpdate(films, 1).getMessage());
         assertEquals(films.get(2), controller.update(films.get(2)));
         assertEquals(films.get(3), controller.update(films.get(3)));
-        assertEquals("The maximum description length is 200 characters",
-                exceptionTestUpdate(films, 4).getMessage());
         assertEquals("The release date must be - no earlier than December 28, 1895",
                 exceptionTestUpdate(films, 5).getMessage());
-        assertEquals("Movie duration must be positive",
-                exceptionTestUpdate(films, 6).getMessage());
         assertEquals(1, controller.entities.size());
         films.get(0).setName("nameUpdateTest");
         assertEquals("nameUpdateTest", controller.update(films.get(0)).getName());
         films.get(6).setId(100);
         assertEquals("Unable to update id100 has not been added before",
                 exceptionTestUpdate(films, 6).getMessage());
-    }
-
-    private InputDataException exceptionTestAddition(List<Film> films, int listNumber) {
-        return assertThrows(InputDataException.class, () -> controller.create(films.get(listNumber)));
     }
 
     private InputDataException exceptionTestUpdate(List<Film> films, int listNumber) {

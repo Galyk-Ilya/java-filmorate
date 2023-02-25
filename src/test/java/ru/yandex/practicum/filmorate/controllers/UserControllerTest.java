@@ -37,14 +37,6 @@ public class UserControllerTest {
         assertEquals(0, controller.entities.size());
         controller.create(users.get(0));
         assertEquals(1, controller.entities.size());
-        assertEquals("Email cannot be empty and must contain the @ symbol",
-                exceptionTestAddition(users, 1).getMessage());
-        assertEquals("Email cannot be empty and must contain the @ symbol",
-                exceptionTestAddition(users, 2).getMessage());
-        assertEquals("Login cannot be empty or contain spaces",
-                exceptionTestAddition(users, 3).getMessage());
-        assertEquals("Login cannot be empty or contain spaces",
-                exceptionTestAddition(users, 4).getMessage());
         assertEquals("Date of birth cannot be in the future",
                 exceptionTestAddition(users, 5).getMessage());
         controller.create(users.get(6));
@@ -61,14 +53,6 @@ public class UserControllerTest {
         controller.update(users.get(6));
         assertEquals("Xcaz", controller.entities.get(1).getName());
         assertEquals(1, controller.entities.size());
-        assertEquals("Email cannot be empty and must contain the @ symbol",
-                exceptionTestUpdate(users, 1).getMessage());
-        assertEquals("Email cannot be empty and must contain the @ symbol",
-                exceptionTestUpdate(users, 2).getMessage());
-        assertEquals("Login cannot be empty or contain spaces",
-                exceptionTestUpdate(users, 3).getMessage());
-        assertEquals("Login cannot be empty or contain spaces",
-                exceptionTestUpdate(users, 4).getMessage());
         assertEquals("Date of birth cannot be in the future", exceptionTestUpdate(users, 5).getMessage());
         assertEquals(1, controller.entities.size());
         users.get(6).setName("nameUpdateTest");

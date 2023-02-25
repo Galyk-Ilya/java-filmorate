@@ -15,15 +15,6 @@ public class UserController extends Controller<User> {
 
     @Override
     public void validate(User user) {
-
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new InputDataException("Email cannot be empty and must contain the @ symbol");
-        }
-        log.debug("user passed the test for Email");
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new InputDataException("Login cannot be empty or contain spaces");
-        }
-        log.debug("user passed the test for login");
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new InputDataException("Date of birth cannot be in the future");
         }
