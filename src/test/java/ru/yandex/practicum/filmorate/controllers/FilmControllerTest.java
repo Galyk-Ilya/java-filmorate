@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,16 +27,16 @@ public class FilmControllerTest {
     public void getAllTest() {
         List<Film> films = createFilmList();
         assertEquals(0, controller.getAll().size());
-        controller.dataMap.put(1, films.get(0));
+        controller.entities.put(1, films.get(0));
         assertEquals(1, controller.getAll().size());
     }
 
     @Test
     public void createTest() {
         List<Film> films = createFilmList();
-        assertEquals(0, controller.dataMap.size());
+        assertEquals(0, controller.entities.size());
         controller.create(films.get(0));
-        assertEquals(1, controller.dataMap.size());
+        assertEquals(1, controller.entities.size());
         assertEquals("Movie title cannot be empty",
                 exceptionTestAddition(films, 1).getMessage());
         assertEquals(films.get(2), controller.create(films.get(2)));
@@ -48,15 +47,15 @@ public class FilmControllerTest {
                 exceptionTestAddition(films, 5).getMessage());
         assertEquals("Movie duration must be positive",
                 exceptionTestAddition(films, 6).getMessage());
-        assertEquals(3, controller.dataMap.size());
+        assertEquals(3, controller.entities.size());
     }
 
     @Test
     public void updateTest() {
         List<Film> films = createFilmList();
-        assertEquals(0, controller.dataMap.size());
+        assertEquals(0, controller.entities.size());
         films.forEach(film -> film.setId(1));
-        controller.dataMap.put(1, films.get(0));
+        controller.entities.put(1, films.get(0));
         assertEquals("Movie title cannot be empty", exceptionTestUpdate(films, 1).getMessage());
         assertEquals(films.get(2), controller.update(films.get(2)));
         assertEquals(films.get(3), controller.update(films.get(3)));
@@ -66,7 +65,7 @@ public class FilmControllerTest {
                 exceptionTestUpdate(films, 5).getMessage());
         assertEquals("Movie duration must be positive",
                 exceptionTestUpdate(films, 6).getMessage());
-        assertEquals(1, controller.dataMap.size());
+        assertEquals(1, controller.entities.size());
         films.get(0).setName("nameUpdateTest");
         assertEquals("nameUpdateTest", controller.update(films.get(0)).getName());
         films.get(6).setId(100);

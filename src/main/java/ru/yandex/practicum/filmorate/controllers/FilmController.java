@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.exceptions.InputDataException;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -19,20 +17,7 @@ import java.util.Collection;
 public class FilmController extends Controller<Film> {
     private final LocalDate theBirthOfCinema = LocalDate.of(1895, 12, 28);
 
-    public Collection<Film> getAll() {
-        return super.getAll();
-    }
-
-    public Film create(@RequestBody Film film) {
-        log.debug("create film");
-        return super.create(film);
-    }
-
-    public Film update(@RequestBody Film film) {
-        log.debug("update film");
-        return super.update(film);
-    }
-
+    @Override
     public void validate(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new InputDataException("Movie title cannot be empty");

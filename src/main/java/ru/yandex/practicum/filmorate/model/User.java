@@ -12,14 +12,14 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@ToString
+@ToString(callSuper = true)
 
 public class User extends Model {
     private String email;
-    protected String name;
+    private String name;
     private String login;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

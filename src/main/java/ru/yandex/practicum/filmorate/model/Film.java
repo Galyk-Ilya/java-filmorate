@@ -13,14 +13,14 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@ToString
+@ToString(callSuper = true)
 public class Film extends Model {
 
     private String description;
-    protected String name;
+    private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private long duration;

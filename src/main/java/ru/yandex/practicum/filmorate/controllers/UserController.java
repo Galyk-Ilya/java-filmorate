@@ -1,34 +1,19 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exceptions.InputDataException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.Collection;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController extends Controller<User> {
 
-    public Collection<User> getAll() {
-        return super.getAll();
-    }
-
-    public User create(@RequestBody User user) {
-        log.debug("create user");
-        return super.create(user);
-    }
-
-    public User update(@RequestBody User user) {
-        log.debug("update user");
-        return super.update(user);
-    }
-
+    @Override
     public void validate(User user) {
 
         if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
