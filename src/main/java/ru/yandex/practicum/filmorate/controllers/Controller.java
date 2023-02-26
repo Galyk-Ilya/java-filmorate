@@ -45,5 +45,7 @@ public abstract class Controller<T extends Model> {
         return entities.values();
     }
 
-    public void validate(T entity){}
+    protected void validate(T entity){}
+
+    public void preSave(T entity) {}
 }

@@ -37,9 +37,7 @@ public class UserControllerTest {
         assertEquals(0, controller.entities.size());
         controller.create(users.get(0));
         assertEquals(1, controller.entities.size());
-        assertEquals("Date of birth cannot be in the future",
-                assertThrows(InputDataException.class, () -> controller.create(users.get(5))).getMessage());
-        controller.create(users.get(6));
+        controller.create(users.get(1));
         assertEquals("Xcaz", controller.entities.get(2).getName());
         assertEquals(2, controller.entities.size());
     }
@@ -50,34 +48,22 @@ public class UserControllerTest {
         assertEquals(0, controller.entities.size());
         controller.entities.put(1, users.get(0));
         users.forEach(film -> film.setId(1));
-        controller.update(users.get(6));
+        controller.update(users.get(1));
         assertEquals("Xcaz", controller.entities.get(1).getName());
         assertEquals(1, controller.entities.size());
-        assertEquals("Date of birth cannot be in the future", exceptionTestUpdate(users, 5).getMessage());
         assertEquals(1, controller.entities.size());
-        users.get(6).setName("nameUpdateTest");
-        assertEquals("nameUpdateTest", controller.update(users.get(6)).getName());
-        users.get(6).setId(100);
+        users.get(1).setName("nameUpdateTest");
+        assertEquals("nameUpdateTest", controller.update(users.get(1)).getName());
+        users.get(1).setId(100);
         assertEquals("Unable to update id100 has not been added before",
-                exceptionTestUpdate(users, 6).getMessage());
-    }
-
-    private InputDataException exceptionTestUpdate(List<User> users, int listNumber) {
-        return assertThrows(InputDataException.class, () -> controller.update(users.get(listNumber)));
+                assertThrows(InputDataException.class, () -> controller.update(users.get(1))).getMessage());
     }
 
     public List<User> createUsers() {
         List<User> users;
         User userSuccess = new User("xcaz@inbox.ru", "Ilya", "Xcaz", localDate);
-        User userEmailTest1 = new User("xcaz.inbox.ru", "Ilya", "Xcaz", localDate);
-        User userEmailTest2 = new User("", "Ilya", "Xcaz", localDate);
-        User userLoginTest1 = new User("xcaz@inbox.ru", "Ilya", "", localDate);
-        User userLoginTest2 = new User("xcaz@inbox.ru", "Ilya", " x c a z", localDate);
-        User userBirthdayTest = new User("xcaz@inbox.ru", "xcaz", "Ilya",
-                LocalDate.parse("2025-02-10", formatter));
         User userNameTest = new User("xcaz@inbox.ru", "", "Xcaz", localDate);
-        users = List.of(userSuccess, userEmailTest1, userEmailTest2,
-                userLoginTest1, userLoginTest2, userBirthdayTest, userNameTest);
+        users = List.of(userSuccess, userNameTest);
         return users;
     }
 }

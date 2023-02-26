@@ -13,14 +13,13 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/films")
 public class FilmController extends Controller<Film> {
-    private final LocalDate theBirthOfCinema = LocalDate.of(1895, 12, 28);
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
     @Override
     public void validate(Film film) {
-        if (film.getReleaseDate().isBefore(theBirthOfCinema)) {
+        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             throw new InputDataException("The release date must be - no earlier than December 28, 1895");
         }
         log.debug(film.getName() + " passed the test for releaseDate");
-        log.debug(film.getName() + " passed the checks of all fields");
     }
 }
