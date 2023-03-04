@@ -11,7 +11,7 @@ public interface Storage<T extends Model> {
 
     List<T> getAll();
 
-    T get(long id);
+    T get(int id);
 
     void delete(int id);
 }

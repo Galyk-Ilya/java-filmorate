@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -28,13 +30,13 @@ public class FilmController {
     }
 
     @PostMapping
-    public void create(@Valid @RequestBody Film entity) {
-        service.create(entity);
+    public Film create(@Valid @RequestBody Film entity) {
+        return service.create(entity);
     }
 
     @PutMapping
-    public void update(@Valid @RequestBody Film entity) {
-        service.update(entity);
+    public Film update(@Valid @RequestBody Film entity) {
+        return service.update(entity);
     }
 
     @GetMapping
@@ -62,15 +64,8 @@ public class FilmController {
         service.likeDelete(id, userId);
     }
 
-    @GetMapping("/popular?count={count}")
-    public List<Film> popular(@PathVariable(required = false) int count) {
-        if (count == 0) {
-            count = 10;
-        }
+    @GetMapping(value = {"/popular", "/popular?count={count}"})
+    public List<Film> popular(@RequestParam Optional<Integer> count) {
         return service.popular(count);
     }
-//    PUT /films/{id}/like/{userId} — пользователь ставит лайк фильму.
-//    DELETE /films/{id}/like/{userId} — пользователь удаляет лайк.
-//            GET /films/popular?count={count} — возвращает список из первых count
-//    фильмов по количеству лайков. Если значение параметра count не задано, верните первые 10.
 }

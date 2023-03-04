@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -30,17 +29,17 @@ public class UserController {
     }
 
     @PostMapping
-    public void create(@Valid @RequestBody User entity) {
-        service.create(entity);
+    public User create(@Valid @RequestBody User entity) {
+        return service.create(entity);
     }
 
     @PutMapping
-    public void update(@Valid @RequestBody User entity) {
-        service.update(entity);
+    public User update(@Valid @RequestBody User entity) {
+        return service.update(entity);
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return service.getAll();
     }
 
@@ -54,27 +53,23 @@ public class UserController {
         return service.getEntity(id);
     }
 
-    @PostMapping("/users/{id}/friends/{friendId}")
+    @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         service.addFriend(id, friendId);
     }
 
-    @DeleteMapping("/users/{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         service.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/users/{id}/friends")
-    public Set<Integer> getFriends(@PathVariable int id) {
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable int id) {
         return service.getFriends(id);
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
+    @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getMutualFriends(@PathVariable int id, @PathVariable int otherId) {
-       return service.getMutualFriends(id, otherId);
+        return service.getMutualFriends(id, otherId);
     }
-//    PUT /users/{id}/friends/{friendId} — добавление в друзья.
-//            DELETE /users/{id}/friends/{friendId} — удаление из друзей.
-//            GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
-//            GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
 }

@@ -10,6 +10,6 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 public abstract class Model {
-    @NotNull(groups = Update.class)
+    @NotNull
     protected int id;
 }
