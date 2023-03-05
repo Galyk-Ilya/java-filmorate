@@ -48,15 +48,15 @@ public class UserService extends AbstractService<User> {
     }
 
     public List<User> getFriends(int id) {
-        return entities.get(id).getFriendId().stream().
-                map(integer -> entities.get(integer)).
-                collect(Collectors.toList());
+        return entities.get(id).getFriendId().stream()
+                .map(integer -> entities.get(integer))
+                .collect(Collectors.toList());
     }
 
     public List<User> getMutualFriends(int id, int otherId) {
-        return entities.get(id).getFriendId().stream().
-                filter(integer -> entities.get(otherId).getFriendId().contains(integer)).
-                map(integer -> entities.get(integer)).
-                collect(Collectors.toList());
+        return entities.get(id).getFriendId().stream()
+                .filter(integer -> entities.get(otherId).getFriendId().contains(integer))
+                .map(integer -> entities.get(integer))
+                .collect(Collectors.toList());
     }
 }

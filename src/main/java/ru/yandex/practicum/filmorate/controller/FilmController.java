@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    final FilmService service;
+    private final FilmService service;
 
     @Autowired
     public FilmController(FilmService service) {
@@ -55,17 +55,19 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void likeCreate(@PathVariable int id, @PathVariable int userId) {
-        service.likeCreate(id, userId);
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
+        service.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void likeDelete(@PathVariable int id, @PathVariable int userId) {
-        service.likeDelete(id, userId);
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+        service.deleteLike(id, userId);
     }
 
-    @GetMapping(value = {"/popular", "/popular?count={count}"})
-    public List<Film> popular(@RequestParam Optional<Integer> count) {
+    @GetMapping(value = {"/popular"})
+    public List<Film> popular(@RequestParam(required = false) Integer count) {
+        count = Optional.ofNullable(count).orElse(10);
+            log.info("set to 10 for count");
         return service.popular(count);
     }
 }

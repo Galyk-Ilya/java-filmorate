@@ -38,5 +38,5 @@ public class Film extends Model {
     private long duration;
 
     @JsonIgnore
-    private Set<Integer> LikesUsersId = new HashSet<>();
+    private Set<Integer> likedUserIds = new HashSet<>();
 }
