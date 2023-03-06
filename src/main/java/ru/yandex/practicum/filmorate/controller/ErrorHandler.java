@@ -37,7 +37,7 @@ public class ErrorHandler {
         return new ErrorResponse(500, e.getMessage());
     }
 
-    static class ErrorResponse {
+    private static class ErrorResponse {
         private int error;
         private final String description;
 

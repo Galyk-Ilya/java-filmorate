@@ -11,8 +11,10 @@ import java.util.List;
 @Slf4j
 public class AbstractStorage<T extends Model> implements Storage<T> {
     protected final HashMap<Integer, T> entities = new HashMap<>();
+    private int counter = 0;
 
     public void create(T entity) {
+        entity.setId(++counter);
         entities.put(entity.getId(), entity);
         log.debug("create entity, id " + entity.getId());
     }
@@ -29,11 +31,10 @@ public class AbstractStorage<T extends Model> implements Storage<T> {
 
     @Override
     public T get(int id) {
-        if (entities.containsKey(id)) {
-            return entities.get(id);
-        } else {
+        if (!entities.containsKey(id)) {
             throw new NotFoundException("Not found id:" + id);
         }
+        return entities.get(id);
     }
 
     @Override

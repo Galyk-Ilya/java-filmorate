@@ -11,13 +11,11 @@ import java.util.List;
 public abstract class AbstractService<T extends Model> {
     protected Storage<T> entities;
 
-    private int counter = 0;
-
     protected static Logger log = LoggerFactory.getLogger(AbstractService.class);
 
     public T create(T entity) {
+        preSave(entity);
         validate(entity);
-        entity.setId(++counter);
         entities.create(entity);
         return entity;
     }
@@ -44,5 +42,9 @@ public abstract class AbstractService<T extends Model> {
         entities.delete(id);
     }
 
-    protected void validate(T entity) {}
+    protected void validate(T entity) {
+    }
+
+    protected void preSave(T entity) {
+    }
 }

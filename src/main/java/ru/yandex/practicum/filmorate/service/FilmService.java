@@ -2,9 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
@@ -28,22 +29,22 @@ public class FilmService extends AbstractService<Film> {
         if (entity.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             throw new ValidationException("The release date must be - no earlier than December 28, 1895");
         }
-        log.debug(entity.getName() + " passed the test for releaseDate");
     }
 
-
     public void addLike(int filmId, int userId) {
-        if (userStorage.getAll().contains(userStorage.get(userId))) {
-            entities.get(filmId).getLikedUserIds().add(userId);
-            log.info("movie id:" + filmId + " was liked by person id:" + userId);
+        if (userStorage.get(userId) == null || entities.get(filmId) == null) {
+            throw new NotFoundException("Not found id:" + filmId + " or " + userId);
         }
+        entities.get(filmId).getLikedUserIds().add(userId);
+        log.info("movie id:" + filmId + " was liked by person id:" + userId);
     }
 
     public void deleteLike(int filmId, int userId) {
-        if (userStorage.getAll().contains(userStorage.get(userId))) {
-            entities.get(filmId).getLikedUserIds().remove(userId);
-            log.info("movie id:" + filmId + " was deleted by person id:" + userId);
+        if (userStorage.get(userId) == null || entities.get(filmId) == null) {
+            throw new NotFoundException("Not found id:" + filmId + " or " + userId);
         }
+        entities.get(filmId).getLikedUserIds().remove(userId);
+        log.info("movie id:" + filmId + " was deleted by person id:" + userId);
     }
 
     public List<Film> popular(int count) {

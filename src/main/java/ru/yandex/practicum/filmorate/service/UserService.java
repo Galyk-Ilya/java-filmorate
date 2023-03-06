@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
@@ -19,11 +20,7 @@ public class UserService extends AbstractService<User> {
     }
 
     @Override
-    protected void validate(User user) {
-        preSave(user);
-    }
-
-    public void preSave(User user) {
+    protected void preSave(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.debug("The name user field is set to login");
@@ -31,20 +28,21 @@ public class UserService extends AbstractService<User> {
     }
 
     public void addFriend(int id, int friendId) {
-        if (entities.getAll().contains(entities.get(id)) && entities.getAll().contains(entities.get(friendId))) {
-            entities.get(id).getFriendId().add(friendId);
-            entities.get(friendId).getFriendId().add(id);
-            log.info(id + " and " + friendId + " added to friends");
+        if (entities.get(id) == null || entities.get(friendId) == null) {
+            throw new NotFoundException("Not found id:" + id + " or " + friendId);
         }
+        entities.get(id).getFriendId().add(friendId);
+        entities.get(friendId).getFriendId().add(id);
+        log.info(id + " and " + friendId + " added to friends");
     }
 
     public void deleteFriend(int id, int friendId) {
-        if (entities.getAll().contains(entities.get(id)) && entities.getAll().contains(entities.get(friendId))) {
-            entities.get(id).getFriendId().remove(friendId);
-            entities.get(friendId).getFriendId().remove(id);
-            log.info(id + " and " + friendId + " removed from friends");
-
+        if (entities.get(id) == null || entities.get(friendId) == null) {
+            throw new NotFoundException("Not found id:" + id + " or " + friendId);
         }
+        entities.get(id).getFriendId().remove(friendId);
+        entities.get(friendId).getFriendId().remove(id);
+        log.info(id + " and " + friendId + " removed from friends");
     }
 
     public List<User> getFriends(int id) {

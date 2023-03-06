@@ -64,10 +64,11 @@ public class FilmController {
         service.deleteLike(id, userId);
     }
 
-    @GetMapping(value = {"/popular"})
-    public List<Film> popular(@RequestParam(required = false) Integer count) {
-        count = Optional.ofNullable(count).orElse(10);
-            log.info("set to 10 for count");
-        return service.popular(count);
+    @GetMapping("/popular")
+    public List<Film> popular(@RequestParam Optional<Integer> count) {
+        if (count.isPresent()) {
+            return service.popular(count.get());
+        }
+        return service.popular(10);
     }
 }
