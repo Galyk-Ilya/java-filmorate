@@ -31,8 +31,8 @@ public class UserService extends AbstractService<User> {
         if (entities.get(id) == null || entities.get(friendId) == null) {
             throw new NotFoundException("Not found id:" + id + " or " + friendId);
         }
-        entities.get(id).getFriendId().add(friendId);
-        entities.get(friendId).getFriendId().add(id);
+        entities.get(id).getFriendsId().add(friendId);
+        entities.get(friendId).getFriendsId().add(id);
         log.info(id + " and " + friendId + " added to friends");
     }
 
@@ -40,20 +40,20 @@ public class UserService extends AbstractService<User> {
         if (entities.get(id) == null || entities.get(friendId) == null) {
             throw new NotFoundException("Not found id:" + id + " or " + friendId);
         }
-        entities.get(id).getFriendId().remove(friendId);
-        entities.get(friendId).getFriendId().remove(id);
+        entities.get(id).getFriendsId().remove(friendId);
+        entities.get(friendId).getFriendsId().remove(id);
         log.info(id + " and " + friendId + " removed from friends");
     }
 
     public List<User> getFriends(int id) {
-        return entities.get(id).getFriendId().stream()
+        return entities.get(id).getFriendsId().stream()
                 .map(integer -> entities.get(integer))
                 .collect(Collectors.toList());
     }
 
     public List<User> getMutualFriends(int id, int otherId) {
-        return entities.get(id).getFriendId().stream()
-                .filter(integer -> entities.get(otherId).getFriendId().contains(integer))
+        return entities.get(id).getFriendsId().stream()
+                .filter(integer -> entities.get(otherId).getFriendsId().contains(integer))
                 .map(integer -> entities.get(integer))
                 .collect(Collectors.toList());
     }

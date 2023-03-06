@@ -47,7 +47,7 @@ public class FilmService extends AbstractService<Film> {
         log.info("movie id:" + filmId + " was deleted by person id:" + userId);
     }
 
-    public List<Film> popular(int count) {
+    public List<Film> getMostPopularFilms(int count) {
         return entities.getAll().stream()
                 .sorted((x, y) -> y.getLikedUserIds().size() - x.getLikedUserIds().size())
                 .limit(count)

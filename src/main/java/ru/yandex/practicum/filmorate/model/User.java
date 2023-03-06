@@ -39,5 +39,5 @@ public class User extends Model {
     private LocalDate birthday;
 
     @JsonIgnore
-    private Set<Integer> friendId = new HashSet<>();
+    private Set<Integer> friendsId = new HashSet<>();
 }
