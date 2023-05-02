@@ -11,6 +11,8 @@ import lombok.ToString;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
@@ -23,16 +25,12 @@ import java.time.LocalDate;
 public class User{
 
     private int id;
-
     @Email(message = "Email cannot be empty and must contain the @ symbol")
     private String email;
-
-    private String name;
-
     @NotBlank(message = "Login cannot be empty or contain spaces")
+    @Pattern(regexp = ".*\\S.", message = "Login must not contain spaces")
     private String login;
-
-    @Past(message = "user passed the test for Birthday")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    private String name;
+    @PastOrPresent(message = "Date of birth cannot be in the future")
     private LocalDate birthday;
 }

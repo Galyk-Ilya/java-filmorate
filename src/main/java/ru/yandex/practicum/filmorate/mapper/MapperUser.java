@@ -18,6 +18,6 @@ public class MapperUser implements RowMapper<User> {
                 .email(rs.getString("email"))
                 .name(rs.getString("name"))
                 .login(rs.getString("login"))
-                .birthday(rs.getDate("birthsday").toLocalDate()).build();
+                .birthday(rs.getDate("birthday").toLocalDate()).build();
     }
 }
