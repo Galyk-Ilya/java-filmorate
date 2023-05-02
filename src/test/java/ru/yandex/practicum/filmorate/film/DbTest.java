@@ -36,7 +36,7 @@ class DbTest {
         User user = new User(1, "email", "login", "name", LocalDate.of(1997, 2, 10));
         userStorage.createUser(user);
         Mpa mpa = new Mpa(5, "NC-17");
-        Genre genre = new Genre(1, "Comedy");
+        Genre genre = new Genre(1, "Комедия");
         Film film = new Film(1, "name", "description", LocalDate.of(1955, 1, 28), 120, List.of(genre), mpa);
         filmStorage.createFilm(film);
     }
