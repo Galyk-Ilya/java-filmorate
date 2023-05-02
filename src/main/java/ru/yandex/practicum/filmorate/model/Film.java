@@ -3,27 +3,29 @@ package ru.yandex.practicum.filmorate.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.ValidationException;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
-public class Film extends Model {
+@Builder
+public class Film {
+
+    private int id;
 
     @Size(min = 1, max = 200, message = "The maximum description length is 200 characters")
     private String description;
@@ -38,5 +40,8 @@ public class Film extends Model {
     private long duration;
 
     @JsonIgnore
-    private Set<Integer> likedUserIds = new HashSet<>();
+    private List<Genre> genres;
+
+    @JsonIgnore
+    private Mpa mpa;
 }

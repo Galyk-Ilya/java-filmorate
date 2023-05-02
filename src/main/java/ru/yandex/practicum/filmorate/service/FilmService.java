@@ -1,56 +1,86 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-public class FilmService extends AbstractService<Film> {
+@RequiredArgsConstructor
+public class FilmService {
 
+    private final FilmStorage filmStorage;
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
-    private final UserStorage userStorage;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        entities = filmStorage;
-        this.userStorage = userStorage;
+    public Film createFilm(Film film) {
+        filmValidation(film);
+        return filmStorage.createFilm(film);
     }
 
-    @Override
-    protected void validate(Film entity) {
-        if (entity.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
-            throw new ValidationException("The release date must be - no earlier than December 28, 1895");
-        }
+    public List<Film> findAllFilms() {
+        return filmStorage.findAllFilms();
+    }
+
+    public Film update(Film film) {
+        filmValidation(film);
+        return filmStorage.update(film);
+    }
+
+    public Film getFilmById(int filmId) {
+        return filmStorage.getFilmById(filmId);
+    }
+
+    public Film deleteFilm(int id) {
+        return filmStorage.deleteFilm(id);
     }
 
     public void addLike(int filmId, int userId) {
-        if (userStorage.get(userId) == null || entities.get(filmId) == null) {
-            throw new NotFoundException("Not found id:" + filmId + " or " + userId);
-        }
-        entities.get(filmId).getLikedUserIds().add(userId);
+        filmStorage.addLike(filmId, userId);
         log.info("movie id:" + filmId + " was liked by person id:" + userId);
     }
 
     public void deleteLike(int filmId, int userId) {
-        if (userStorage.get(userId) == null || entities.get(filmId) == null) {
-            throw new NotFoundException("Not found id:" + filmId + " or " + userId);
-        }
-        entities.get(filmId).getLikedUserIds().remove(userId);
+        filmStorage.deleteLike(filmId, userId);
         log.info("movie id:" + filmId + " was deleted by person id:" + userId);
     }
 
     public List<Film> getMostPopularFilms(int count) {
-        return entities.getAll().stream()
-                .sorted((x, y) -> y.getLikedUserIds().size() - x.getLikedUserIds().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getPopularFilms(count);
     }
+
+    public void filmValidation(Film film) {
+        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
+            throw new ValidationException("The release date must be - no earlier than December 28, 1895");
+        }
+    }
+
+//    public void addLike(int filmId, int userId) {
+//        if (userStorage.get(userId) == null || entities.get(filmId) == null) {
+//            throw new NotFoundException("Not found id:" + filmId + " or " + userId);
+//        }
+//        entities.get(filmId).getLikedUserIds().add(userId);
+//        log.info("movie id:" + filmId + " was liked by person id:" + userId);
+//    }
+//
+//    public void deleteLike(int filmId, int userId) {
+//        if (userStorage.get(userId) == null || entities.get(filmId) == null) {
+//            throw new NotFoundException("Not found id:" + filmId + " or " + userId);
+//        }
+//        entities.get(filmId).getLikedUserIds().remove(userId);
+//        log.info("movie id:" + filmId + " was deleted by person id:" + userId);
+//    }
+//
+//    public List<Film> getMostPopularFilms(int count) {
+//        return entities.getAll().stream()
+//                .sorted((x, y) -> y.getLikedUserIds().size() - x.getLikedUserIds().size())
+//                .limit(count)
+//                .collect(Collectors.toList());
+//    }
 }

@@ -31,7 +31,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film entity) {
-        return service.create(entity);
+        return service.createFilm(entity);
     }
 
     @PutMapping
@@ -41,17 +41,17 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getFilms() {
-        return service.getAll();
+        return service.findAllFilms();
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
-        service.deleteEntity(id);
+        service.deleteFilm(id);
     }
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable int id) {
-        return service.getEntity(id);
+        return service.getFilmById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")

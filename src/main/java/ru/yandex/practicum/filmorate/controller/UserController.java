@@ -45,12 +45,12 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
-        service.deleteEntity(id);
+        service.deleteUser(id);
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id) {
-        return service.getEntity(id);
+        return service.getUserById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -65,7 +65,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable int id) {
-        return service.getFriends(id);
+        return service.getUserFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
