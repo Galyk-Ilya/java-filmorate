@@ -19,12 +19,14 @@ public class MapperFilm implements RowMapper<Film> {
 
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return Film.builder().id(rs.getInt("id"))
+        return Film.builder()
+                .id(rs.getInt("id"))
                 .description(rs.getString("description"))
                 .name(rs.getString("name"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .genres(genreDbStorage.getByFilmId(rs.getInt("id")))
-                .mpa(mpaDbStorage.getByFilmId(rs.getInt("id"))).build();
+                .mpa(mpaDbStorage.getByFilmId(rs.getInt("id")))
+                .build();
     }
 }

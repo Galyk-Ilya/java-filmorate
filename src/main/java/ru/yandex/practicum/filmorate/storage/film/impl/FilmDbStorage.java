@@ -47,7 +47,7 @@ public class FilmDbStorage implements FilmStorage {
 
         if (film.getGenres() != null) {
             for (Genre genre : film.getGenres()) {
-                if (genre.getId() == null || genre.getName() == null) {
+                if (genre.getId() == null && genre.getName() == null) {
                     throw new NotFoundException("No data");
                 }
             }
