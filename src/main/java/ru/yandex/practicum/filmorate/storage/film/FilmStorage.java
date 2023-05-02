@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface FilmStorage {
 
-    Film createFilm(Film film);//
+    Film createFilm(Film film);
 
-    List<Film> findAllFilms();//
+    List<Film> findAllFilms();
 
-    Film update(Film film);//
+    Film update(Film film);
 
-    Film deleteFilm(int filmId);//
+    Film deleteFilm(int filmId);
 
-    Film getFilmById(int filmId);//
+    Film getFilmById(int filmId);
 
     void addLike(int filmId, int userId);
 

@@ -36,12 +36,10 @@ public class MpaDbStorage implements MpaStorage {
     public Mpa getById(int id) {
         String sql = "SELECT * FROM mpa WHERE id = ?";
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sql, id);
-
         if (!mpaRows.next()) {
             log.warn("Rating {} not found.", id);
             throw new NotFoundException("Rating not found");
         }
-
         return jdbcTemplate.queryForObject(sql, mapperMpa, id);
     }
 
@@ -51,7 +49,7 @@ public class MpaDbStorage implements MpaStorage {
                 "from MPA AS m " +
                 "join Films AS f ON m.ID = f.MPA_ID " +
                 "where f.ID = ?";
-        List<Mpa> mpas = jdbcTemplate.query(sqlQuery,mapperMpa, id);
+        List<Mpa> mpas = jdbcTemplate.query(sqlQuery, mapperMpa, id);
         if (mpas.size() != 1) {
             return null;
         }

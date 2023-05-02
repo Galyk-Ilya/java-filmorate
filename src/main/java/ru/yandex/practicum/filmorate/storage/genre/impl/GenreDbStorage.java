@@ -30,19 +30,18 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Collection<Genre> findAll() {
         String sql = "SELECT * FROM genre";
-        return jdbcTemplate.query(sql,mapperGenre);
+        return jdbcTemplate.query(sql, mapperGenre);
     }
 
     @Override
     public Genre getById(int id) {
         final String sql = "SELECT * FROM genre WHERE id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, id);
-
         if (!genreRows.next()) {
             log.warn("Genre {} not found.", id);
             throw new NotFoundException("Genre not found");
         }
-        return jdbcTemplate.queryForObject(sql,mapperGenre, id);
+        return jdbcTemplate.queryForObject(sql, mapperGenre, id);
     }
 
     @Override
@@ -51,6 +50,6 @@ public class GenreDbStorage implements GenreStorage {
                 "FROM genre " +
                 "LEFT JOIN film_genre FG on genre.id = FG.genre_id " +
                 "WHERE film_id = ?";
-        return jdbcTemplate.query(sqlQuery,mapperGenre, id);
+        return jdbcTemplate.query(sqlQuery, mapperGenre, id);
     }
 }

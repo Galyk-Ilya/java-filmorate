@@ -35,7 +35,7 @@ public class UserDbStorage implements UserStorage {
         final String sqlQuery = "SELECT * FROM users";
 
         log.info("List of users sent");
-        return jdbcTemplate.query(sqlQuery,mapperUser);
+        return jdbcTemplate.query(sqlQuery, mapperUser);
     }
 
     @Override
@@ -51,7 +51,6 @@ public class UserDbStorage implements UserStorage {
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, generatedId);
-
         log.info("User with id {} sent", user.getId());
         user.setId(Objects.requireNonNull(generatedId.getKey()).intValue());
         return user;
@@ -86,16 +85,13 @@ public class UserDbStorage implements UserStorage {
     public User get(int userId) {
         final String sqlQuery = "SELECT * FROM users WHERE id = ?";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, userId);
-
         if (userRows.next()) {
             log.info("User with id {} found", userId);
-            return jdbcTemplate.queryForObject(sqlQuery,mapperUser, userId);
-
+            return jdbcTemplate.queryForObject(sqlQuery, mapperUser, userId);
         } else {
             log.warn("User with id {} was not found.", userId);
             throw new NotFoundException("User is not found");
         }
-
     }
 
     @Override
@@ -105,11 +101,11 @@ public class UserDbStorage implements UserStorage {
         final String sqlQuery = "INSERT INTO friends (user_id, friend_id) " +
                 "VALUES (?, ?)";
         String checkDuplicate = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
-        SqlRowSet checkRows = jdbcTemplate.queryForRowSet(checkDuplicate, firstId,secondId);
+        SqlRowSet checkRows = jdbcTemplate.queryForRowSet(checkDuplicate, firstId, secondId);
         if (!checkRows.next()) {
             jdbcTemplate.update(sqlQuery, firstId, secondId);
             log.info("User {} subscribed to {}", firstId, secondId);
-    }
+        }
     }
 
     @Override
@@ -128,9 +124,8 @@ public class UserDbStorage implements UserStorage {
                 "from friends as f left join users as u " +
                 "on f.friend_id = u.id where f.user_id = ?" +
                 "order by u.id";
-
         log.info("Request to get the list of friends of user {} completed", id);
-        return jdbcTemplate.query(sqlQuery,mapperUser, id);
+        return jdbcTemplate.query(sqlQuery, mapperUser, id);
     }
 
     @Override
@@ -142,8 +137,7 @@ public class UserDbStorage implements UserStorage {
                 "left join users as u on f.friend_id = u.id " +
                 "where f.user_id = ? " +
                 "and f.friend_id in (select friend_id from friends where user_id = ?) ";
-
         log.info("List of mutual friends {} and {} sent", firstId, secondId);
-        return jdbcTemplate.query(sqlQuery,mapperUser, firstId, secondId);
+        return jdbcTemplate.query(sqlQuery, mapperUser, firstId, secondId);
     }
 }

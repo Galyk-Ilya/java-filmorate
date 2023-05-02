@@ -46,8 +46,8 @@ public class FilmDbStorage implements FilmStorage {
     public Film createFilm(Film film) {
 
         if (film.getGenres() != null) {
-            for (Genre gch : film.getGenres()) {
-                if (gch.getId() == null || gch.getName() == null) {
+            for (Genre genre : film.getGenres()) {
+                if (genre.getId() == null || genre.getName() == null) {
                     throw new NotFoundException("No data");
                 }
             }
