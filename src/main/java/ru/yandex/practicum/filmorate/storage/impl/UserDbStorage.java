@@ -119,7 +119,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getMutualFriends(int firstId, int secondId) {;
+    public List<User> getMutualFriends(int firstId, int secondId) {
         final String sqlQuery = "select u.id, u.name, u.email, u.login, u.birthday " +
                 "from friends as f " +
                 "left join users as u on f.friend_id = u.id " +
