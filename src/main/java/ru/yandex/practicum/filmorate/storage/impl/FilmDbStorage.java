@@ -29,14 +29,12 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MapperFilm mapperFilm;
     private final MapperUser mapperUser;
-    private final GenreDbStorage genreDbStorage;
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate, MapperFilm mapperFilm, MapperUser mapperUser, GenreDbStorage genreDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapperFilm = mapperFilm;
         this.mapperUser = mapperUser;
-        this.genreDbStorage = genreDbStorage;
     }
 
     @Override
@@ -105,7 +103,6 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
-        film.setGenres(genreDbStorage.getByFilmId(film.getId()));
         return film;
     }
 

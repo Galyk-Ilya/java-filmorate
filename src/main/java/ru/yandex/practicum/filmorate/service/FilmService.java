@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.impl.GenreDbStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
@@ -18,6 +19,11 @@ import java.util.Optional;
 public class FilmService {
 
     private final FilmStorage filmStorage;
+
+    private final GenreDbStorage genreDbStorage;
+
+    MpaService mpaService;
+
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
     public Film createFilm(Film film) {
@@ -32,7 +38,9 @@ public class FilmService {
     public Film update(Film film) {
         containsFilm(film.getId());
         validateDateFilm(film);
-        return filmStorage.update(film);
+        Film resultFilm = filmStorage.update(film);
+        resultFilm.setGenres(genreDbStorage.getByFilmId(film.getId()));
+        return resultFilm;
     }
 
     public Film findById(int filmId) {
