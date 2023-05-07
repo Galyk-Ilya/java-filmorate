@@ -36,6 +36,7 @@ public class UserService {
             throw new NotFoundException("User is not found");
         }
     }
+
     public User update(User user) {
         preSave(user);
         containsUser(user.getId());
@@ -69,7 +70,7 @@ public class UserService {
     public List<User> getMutualFriends(int userId, int otherUserId) {
         containsUser(userId);
         containsUser(otherUserId);
-            return userStorage.getMutualFriends(userId, otherUserId);
+        return userStorage.getMutualFriends(userId, otherUserId);
     }
 
     private void preSave(User user) {
