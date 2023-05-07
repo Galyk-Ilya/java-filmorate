@@ -1,24 +1,26 @@
-package ru.yandex.practicum.filmorate.storage.film.impl;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.mapper.MapperFilm;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.genre.impl.GenreDbStorage;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.mapper.MapperFilm;
+import ru.yandex.practicum.filmorate.storage.mapper.MapperUser;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -26,33 +28,25 @@ public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final MapperFilm mapperFilm;
+    private final MapperUser mapperUser;
     private final GenreDbStorage genreDbStorage;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, MapperFilm mapperFilm, GenreDbStorage genreDbStorage) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, MapperFilm mapperFilm, MapperUser mapperUser, GenreDbStorage genreDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapperFilm = mapperFilm;
+        this.mapperUser = mapperUser;
         this.genreDbStorage = genreDbStorage;
     }
 
     @Override
     public List<Film> findAllFilms() {
-        final String sqlQuery = "select * from films";
-
+        final String sqlQuery = "SELECT * FROM films";
         return jdbcTemplate.query(sqlQuery, mapperFilm);
     }
 
     @Override
     public Film createFilm(Film film) {
-
-        if (film.getGenres() != null) {
-            for (Genre genre : film.getGenres()) {
-                if (genre.getId() == null && genre.getName() == null) {
-                    throw new NotFoundException("No data");
-                }
-            }
-        }
-
         final String sqlQuery = "INSERT INTO films (name, description, release_date, duration, mpa_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
         KeyHolder generatedId = new GeneratedKeyHolder();
@@ -72,20 +66,21 @@ public class FilmDbStorage implements FilmStorage {
 
         if (film.getGenres() != null) {
             final String genresSqlQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
+            //List<Object[]> genres = new ArrayList<>();
             for (Genre g : film.getGenres()) {
                 if (g.getId() != null || g.getName() != null) {
+                    // Object[] temp ={g.getId(), g.getName()};
+                    //genres.add(temp);
                     jdbcTemplate.update(genresSqlQuery, film.getId(), g.getId());
                 }
             }
+            //jdbcTemplate.batchUpdate(genresSqlQuery,genres);
         }
-
         return film;
     }
 
     @Override
     public Film update(Film film) {
-        getFilmById(film.getId());
-
         final String sqlQuery = "UPDATE films SET name = ?, description = ?, release_date = ?, " +
                 "duration = ?, mpa_id = ?" +
                 "WHERE id = ?";
@@ -115,22 +110,17 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(int filmId) {
-        final String sqlQuery = "SELECT * FROM films WHERE id = ?";
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sqlQuery, filmId);
-
-        if (filmRows.next()) {
-            log.warn("Movie with id {} found.", filmId);
-            return jdbcTemplate.queryForObject(sqlQuery, mapperFilm, filmId);
-        } else {
-            log.warn("Movie with id {} was not found.", filmId);
-            throw new NotFoundException("Movie not found");
+    public Optional<Film> findById(int id) {
+        try {
+            final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
+            return Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, mapperFilm, id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
         }
     }
 
     @Override
-    public Film deleteFilm(int id) {
-        Film film = getFilmById(id);
+    public void deleteFilm(int id) {
         final String genresSqlQuery = "DELETE FROM film_genre WHERE film_id = ?";
         String mpaSqlQuery = "DELETE FROM mpa WHERE id = ?";
 
@@ -139,20 +129,18 @@ public class FilmDbStorage implements FilmStorage {
         final String sqlQuery = "DELETE FROM films WHERE id = ?";
 
         jdbcTemplate.update(sqlQuery, id);
-        return film;
     }
 
     @Override
     public void addLike(int filmId, int userId) {
-        validate(filmId, userId);
         final String sqlQuery = "INSERT INTO films_likes (film_id, user_id) VALUES (?, ?)";
+
         log.info("User {} liked the movie {}", userId, filmId);
         jdbcTemplate.update(sqlQuery, filmId, userId);
     }
 
     @Override
     public void deleteLike(int filmId, int userId) {
-        validate(filmId, userId);
         final String sqlQuery = "DELETE FROM films_likes " +
                 "WHERE film_id = ? AND user_id = ?";
 
@@ -171,16 +159,13 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, mapperFilm, count);
     }
 
-    private void validate(int filmId, int userId) {
-        final String checkFilmQuery = "SELECT * FROM films WHERE id = ?";
-        final String checkUserQuery = "SELECT * FROM users WHERE id = ?";
-
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(checkFilmQuery, filmId);
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(checkUserQuery, userId);
-
-        if (!filmRows.next() || !userRows.next()) {
-            log.warn("Movie {} and/or user {} not found.", filmId, userId);
-            throw new NotFoundException("Movie or user not found");
+    @Override
+    public Optional<User> findUserById(int userId) {
+        try {
+            final String checkUserQuery = "SELECT * FROM users WHERE id = ?";
+            return Optional.of(jdbcTemplate.queryForObject(checkUserQuery, mapperUser, userId));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
         }
     }
 }

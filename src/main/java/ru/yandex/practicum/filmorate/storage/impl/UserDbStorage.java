@@ -1,21 +1,22 @@
-package ru.yandex.practicum.filmorate.storage.user.impl;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.mapper.MapperUser;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.mapper.MapperUser;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -58,7 +59,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        get(user.getId());
         final String sqlQuery = "UPDATE users " +
                 "SET name = ?, login = ?, email = ?, birthday = ? " +
                 "WHERE id = ?";
@@ -73,31 +73,24 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User deleteUser(int userId) {
-        User user = get(userId);
+    public void deleteUser(int userId) {
         final String sqlQuery = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(sqlQuery, userId);
         log.info("User with id {} deleted", userId);
-        return user;
     }
 
     @Override
-    public User get(int userId) {
-        final String sqlQuery = "SELECT * FROM users WHERE id = ?";
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, userId);
-        if (userRows.next()) {
-            log.info("User with id {} found", userId);
-            return jdbcTemplate.queryForObject(sqlQuery, mapperUser, userId);
-        } else {
-            log.warn("User with id {} was not found.", userId);
-            throw new NotFoundException("User is not found");
+    public Optional<User> get(int userId) {
+        try {
+            final String sqlQuery = "SELECT * FROM users WHERE id = ?";
+            return Optional.of(jdbcTemplate.queryForObject(sqlQuery, mapperUser, userId));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
         }
     }
 
     @Override
     public void addFriend(int firstId, int secondId) {
-        get(firstId);
-        get(secondId);
         final String sqlQuery = "INSERT INTO friends (user_id, friend_id) " +
                 "VALUES (?, ?)";
         String checkDuplicate = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
@@ -110,8 +103,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteFriend(int firstId, int secondId) {
-        get(firstId);
-        get(secondId);
         final String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sqlQuery, firstId, secondId);
         log.info("User {} unfollowed {}", firstId, secondId);
@@ -119,7 +110,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getUserFriends(int id) {
-        get(id);
         final String sqlQuery = "select u.id, u.email, u.name, u.login, u.birthday " +
                 "from friends as f left join users as u " +
                 "on f.friend_id = u.id where f.user_id = ?" +
@@ -129,9 +119,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getMutualFriends(int firstId, int secondId) {
-        get(firstId);
-        get(secondId);
+    public List<User> getMutualFriends(int firstId, int secondId) {;
         final String sqlQuery = "select u.id, u.name, u.email, u.login, u.birthday " +
                 "from friends as f " +
                 "left join users as u on f.friend_id = u.id " +

@@ -1,11 +1,11 @@
-package ru.yandex.practicum.filmorate.mapper;
+package ru.yandex.practicum.filmorate.storage.mapper;
 
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.genre.impl.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.mpa.impl.MpaDbStorage;
+import ru.yandex.practicum.filmorate.storage.impl.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.impl.MpaDbStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

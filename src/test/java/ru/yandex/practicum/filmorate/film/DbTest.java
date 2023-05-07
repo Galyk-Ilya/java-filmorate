@@ -10,10 +10,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.film.impl.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
-import ru.yandex.practicum.filmorate.storage.user.impl.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -43,7 +43,7 @@ class DbTest {
 
     @Test
     public void testFindUserById() {
-        Optional<User> userOptional = Optional.ofNullable(userStorage.get(1));
+        Optional<User> userOptional = userStorage.get(1);
         assertThat(userOptional)
                 .isPresent()
                 .hasValueSatisfying(user ->
@@ -53,7 +53,7 @@ class DbTest {
 
     @Test
     public void testFindFilmById() {
-        Optional<Film> filmOptional = Optional.ofNullable(filmStorage.getFilmById(1));
+        Optional<Film> filmOptional = filmStorage.findById(1);
         assertThat(filmOptional)
                 .isPresent()
                 .hasValueSatisfying(film ->
