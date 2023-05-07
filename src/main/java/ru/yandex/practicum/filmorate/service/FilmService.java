@@ -30,14 +30,14 @@ public class FilmService {
     }
 
     public Film update(Film film) {
-            containsFilm(film.getId());
-            validateDateFilm(film);
-            return filmStorage.update(film);
+        containsFilm(film.getId());
+        validateDateFilm(film);
+        return filmStorage.update(film);
     }
 
     public Film findById(int filmId) {
-       Optional<Film> film = filmStorage.findById(filmId);
-        if (film.isPresent()){
+        Optional<Film> film = filmStorage.findById(filmId);
+        if (film.isPresent()) {
             log.warn("Movie with id {} found.", filmId);
             return film.get();
         } else {
@@ -76,14 +76,14 @@ public class FilmService {
     }
 
     private void containsFilm(int id) {
-        if (filmStorage.findById(id).isEmpty()){
+        if (filmStorage.findById(id).isEmpty()) {
             log.warn("Movie with id {} was not found.", id);
             throw new NotFoundException("Movie not found");
         }
     }
 
     private void containsUser(int id) {
-        if (filmStorage.findUserById(id).isEmpty()){
+        if (filmStorage.findUserById(id).isEmpty()) {
             log.warn("Movie with id {} was not found.", id);
             throw new NotFoundException("User not found");
         }
