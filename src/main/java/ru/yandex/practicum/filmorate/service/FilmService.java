@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.impl.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.impl.MpaDbStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ public class FilmService {
 
     private final GenreDbStorage genreDbStorage;
 
-    MpaService mpaService;
+    private final MpaDbStorage mpaDbStorage;
 
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
@@ -32,7 +33,12 @@ public class FilmService {
     }
 
     public List<Film> findAllFilms() {
-        return filmStorage.findAllFilms();
+        List<Film> films = filmStorage.findAllFilms();
+        films.forEach(f -> {
+            f.setGenres(genreDbStorage.getByFilmId(f.getId()));
+            f.setMpa(mpaDbStorage.getByFilmId(f.getId()));
+        });
+        return films;
     }
 
     public Film update(Film film) {
@@ -47,6 +53,8 @@ public class FilmService {
         Optional<Film> film = filmStorage.findById(filmId);
         if (film.isPresent()) {
             log.warn("Movie with id {} found.", filmId);
+            film.get().setGenres(genreDbStorage.getByFilmId(filmId));
+            film.get().setMpa(mpaDbStorage.getByFilmId(filmId));
             return film.get();
         } else {
             log.warn("Movie with id {} was not found.", filmId);
@@ -74,7 +82,12 @@ public class FilmService {
     }
 
     public List<Film> getMostPopularFilms(int count) {
-        return filmStorage.getPopularFilms(count);
+        List<Film> films = filmStorage.getPopularFilms(count);
+        films.forEach(f -> {
+            f.setGenres(genreDbStorage.getByFilmId(f.getId()));
+            f.setMpa(mpaDbStorage.getByFilmId(f.getId()));
+        });
+        return films;
     }
 
     public void validateDateFilm(Film film) {

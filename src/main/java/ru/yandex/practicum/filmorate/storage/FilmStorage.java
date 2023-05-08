@@ -14,19 +14,6 @@ public interface FilmStorage {
 
     Film update(Film film);
 
-    //    public Film findById(int filmId) {
-    //        final String sqlQuery = "SELECT * FROM films WHERE id = ?";
-    //        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sqlQuery, filmId);
-    //
-    //        if (filmRows.next()) {
-    //            log.warn("Movie with id {} found.", filmId);
-    //            return jdbcTemplate.queryForObject(sqlQuery, mapperFilm, filmId);
-    //        } else {
-    //            log.warn("Movie with id {} was not found.", filmId);
-    //            throw new NotFoundException("Movie not found");
-    //        }
-    //    }
-
     void deleteFilm(int filmId);
 
     Optional<Film> findById(int filmId);
