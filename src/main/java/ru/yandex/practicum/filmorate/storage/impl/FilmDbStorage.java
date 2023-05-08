@@ -4,6 +4,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -18,6 +19,7 @@ import ru.yandex.practicum.filmorate.storage.mapper.MapperUser;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -63,16 +65,23 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(Objects.requireNonNull(generatedId.getKey()).intValue());
 
         if (film.getGenres() != null) {
+
             final String genresSqlQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
-            //List<Object[]> genres = new ArrayList<>();
-            for (Genre g : film.getGenres()) {
-                if (g.getId() != null || g.getName() != null) {
-                    // Object[] temp ={g.getId(), g.getName()};
-                    //genres.add(temp);
-                    jdbcTemplate.update(genresSqlQuery, film.getId(), g.getId());
-                }
-            }
-            //jdbcTemplate.batchUpdate(genresSqlQuery,genres);
+
+            this.jdbcTemplate.batchUpdate(
+                    genresSqlQuery,
+                    new BatchPreparedStatementSetter() {
+                        public void setValues(PreparedStatement ps, int i) throws SQLException {
+                            Genre genre = film.getGenres().get(i);
+                            ps.setString(1, String.valueOf(film.getId()));
+                            ps.setString(2, String.valueOf(genre.getId()));
+                        }
+
+                        @Override
+                        public int getBatchSize() {
+                            return film.getGenres().size();
+                        }
+                    });
         }
         return film;
     }
