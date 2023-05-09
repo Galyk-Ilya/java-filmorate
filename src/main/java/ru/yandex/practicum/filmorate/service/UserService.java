@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,14 +26,9 @@ public class UserService {
     }
 
     public User getUserById(Integer userId) {
-        Optional<User> user = userStorage.get(userId);
-        if (user.isPresent()) {
-            log.warn("User with id {} found.", userId);
-            return user.get();
-        } else {
-            log.warn("User with id {} was not found.", userId);
-            throw new NotFoundException("User is not found");
-        }
+        User user = userStorage.get(userId).orElseThrow(() -> new NotFoundException("User is not found"));
+        log.debug("User with id {} found.", userId);
+        return user;
     }
 
     public User update(User user) {
@@ -81,9 +75,6 @@ public class UserService {
     }
 
     private void containsUser(int id) {
-        if (userStorage.get(id).isEmpty()) {
-            log.warn("User with id {} was not found.", id);
-            throw new NotFoundException("User not found");
-        }
+        userStorage.get(id).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }

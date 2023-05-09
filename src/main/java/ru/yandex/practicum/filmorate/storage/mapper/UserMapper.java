@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 @Component
 @AllArgsConstructor
-public class MapperUser implements RowMapper<User> {
+public class UserMapper implements RowMapper<User> {
 
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {

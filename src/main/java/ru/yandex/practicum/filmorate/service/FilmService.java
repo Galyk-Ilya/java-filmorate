@@ -6,13 +6,12 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.impl.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.impl.MpaDbStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,9 +20,9 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
 
-    private final GenreDbStorage genreDbStorage;
+    private final GenreStorage genreDbStorage;
 
-    private final MpaDbStorage mpaDbStorage;
+    private final MpaStorage mpaDbStorage;
 
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
@@ -42,24 +41,19 @@ public class FilmService {
     }
 
     public Film update(Film film) {
-        containsFilm(film.getId());
         validateDateFilm(film);
+        containsFilm(film.getId());
         Film resultFilm = filmStorage.update(film);
         resultFilm.setGenres(genreDbStorage.getByFilmId(film.getId()));
         return resultFilm;
     }
 
     public Film findById(int filmId) {
-        Optional<Film> film = filmStorage.findById(filmId);
-        if (film.isPresent()) {
-            log.warn("Movie with id {} found.", filmId);
-            film.get().setGenres(genreDbStorage.getByFilmId(filmId));
-            film.get().setMpa(mpaDbStorage.getByFilmId(filmId));
-            return film.get();
-        } else {
-            log.warn("Movie with id {} was not found.", filmId);
-            throw new NotFoundException("Movie not found");
-        }
+        Film film = filmStorage.findById(filmId).orElseThrow(() -> new NotFoundException("Movie not found"));
+        log.debug("Movie with id {} found.", filmId);
+        film.setGenres(genreDbStorage.getByFilmId(filmId));
+        film.setMpa(mpaDbStorage.getByFilmId(filmId));
+        return film;
     }
 
     public void deleteFilm(int id) {
@@ -90,23 +84,17 @@ public class FilmService {
         return films;
     }
 
-    public void validateDateFilm(Film film) {
+    private void validateDateFilm(Film film) {
         if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             throw new ValidationException("The release date must be - no earlier than December 28, 1895");
         }
     }
 
     private void containsFilm(int id) {
-        if (filmStorage.findById(id).isEmpty()) {
-            log.warn("Movie with id {} was not found.", id);
-            throw new NotFoundException("Movie not found");
-        }
+        filmStorage.findById(id).orElseThrow(() -> new NotFoundException("Movie not found"));
     }
 
     private void containsUser(int id) {
-        if (filmStorage.findUserById(id).isEmpty()) {
-            log.warn("Movie with id {} was not found.", id);
-            throw new NotFoundException("User not found");
-        }
+        filmStorage.findUserById(id).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }

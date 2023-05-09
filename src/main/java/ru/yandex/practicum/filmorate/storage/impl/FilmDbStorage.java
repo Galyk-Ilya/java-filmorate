@@ -14,8 +14,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.mapper.MapperFilm;
-import ru.yandex.practicum.filmorate.storage.mapper.MapperUser;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.storage.mapper.UserMapper;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -29,20 +29,20 @@ import java.util.Optional;
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MapperFilm mapperFilm;
-    private final MapperUser mapperUser;
+    private final FilmMapper filmMapper;
+    private final UserMapper mapperUser;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, MapperFilm mapperFilm, MapperUser mapperUser, GenreDbStorage genreDbStorage) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, FilmMapper filmMapper, UserMapper userMapper) {
         this.jdbcTemplate = jdbcTemplate;
-        this.mapperFilm = mapperFilm;
-        this.mapperUser = mapperUser;
+        this.filmMapper = filmMapper;
+        this.mapperUser = userMapper;
     }
 
     @Override
     public List<Film> findAllFilms() {
         final String sqlQuery = "SELECT * FROM films";
-        return jdbcTemplate.query(sqlQuery, mapperFilm);
+        return jdbcTemplate.query(sqlQuery, filmMapper);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class FilmDbStorage implements FilmStorage {
     public Optional<Film> findById(int id) {
         try {
             final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
-            return Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, mapperFilm, id));
+            return Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, filmMapper, id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -162,7 +162,7 @@ public class FilmDbStorage implements FilmStorage {
                 "order by count(fl.user_id) desc " +
                 "limit ?";
 
-        return jdbcTemplate.query(sqlQuery, mapperFilm, count);
+        return jdbcTemplate.query(sqlQuery, filmMapper, count);
     }
 
     @Override

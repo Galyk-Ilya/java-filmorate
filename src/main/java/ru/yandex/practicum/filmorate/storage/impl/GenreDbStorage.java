@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.mapper.MapperGenre;
+import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,18 +19,18 @@ import java.util.List;
 public class GenreDbStorage implements GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MapperGenre mapperGenre;
+    private final GenreMapper genreMapper;
 
     @Autowired
-    public GenreDbStorage(JdbcTemplate jdbcTemplate, MapperGenre mapperGenre) {
+    public GenreDbStorage(JdbcTemplate jdbcTemplate, GenreMapper genreMapper) {
         this.jdbcTemplate = jdbcTemplate;
-        this.mapperGenre = mapperGenre;
+        this.genreMapper = genreMapper;
     }
 
     @Override
     public Collection<Genre> findAll() {
         String sql = "SELECT * FROM genre";
-        return jdbcTemplate.query(sql, mapperGenre);
+        return jdbcTemplate.query(sql, genreMapper);
     }
 
     @Override
@@ -38,10 +38,10 @@ public class GenreDbStorage implements GenreStorage {
         final String sql = "SELECT * FROM genre WHERE id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, id);
         if (!genreRows.next()) {
-            log.warn("Genre {} not found.", id);
+            log.debug("Genre {} not found.", id);
             throw new NotFoundException("Genre not found");
         }
-        return jdbcTemplate.queryForObject(sql, mapperGenre, id);
+        return jdbcTemplate.queryForObject(sql, genreMapper, id);
     }
 
     @Override
@@ -50,6 +50,6 @@ public class GenreDbStorage implements GenreStorage {
                 "FROM genre " +
                 "LEFT JOIN film_genre FG on genre.id = FG.genre_id " +
                 "WHERE film_id = ?";
-        return jdbcTemplate.query(sqlQuery, mapperGenre, id);
+        return jdbcTemplate.query(sqlQuery, genreMapper, id);
     }
 }

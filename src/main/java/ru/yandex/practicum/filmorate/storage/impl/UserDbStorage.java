@@ -10,7 +10,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.storage.mapper.MapperUser;
+import ru.yandex.practicum.filmorate.storage.mapper.UserMapper;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -23,12 +23,12 @@ import java.util.Optional;
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MapperUser mapperUser;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate, MapperUser mapperUser) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate, UserMapper userMapper) {
         this.jdbcTemplate = jdbcTemplate;
-        this.mapperUser = mapperUser;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class UserDbStorage implements UserStorage {
         final String sqlQuery = "SELECT * FROM users";
 
         log.info("List of users sent");
-        return jdbcTemplate.query(sqlQuery, mapperUser);
+        return jdbcTemplate.query(sqlQuery, userMapper);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class UserDbStorage implements UserStorage {
     public Optional<User> get(int userId) {
         try {
             final String sqlQuery = "SELECT * FROM users WHERE id = ?";
-            return Optional.of(jdbcTemplate.queryForObject(sqlQuery, mapperUser, userId));
+            return Optional.of(jdbcTemplate.queryForObject(sqlQuery, userMapper, userId));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -110,22 +110,22 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getUserFriends(int id) {
-        final String sqlQuery = "select u.id, u.email, u.name, u.login, u.birthday " +
-                "from friends as f left join users as u " +
-                "on f.friend_id = u.id where f.user_id = ?" +
-                "order by u.id";
+        final String sqlQuery = "SELECT u.id, u.email, u.name, u.login, u.birthday " +
+                "FROM friends AS f LEFT JOIN users AS u " +
+                "ON f.friend_id = u.id WHERE f.user_id = ?" +
+                "ORDER BY u.id";
         log.info("Request to get the list of friends of user {} completed", id);
-        return jdbcTemplate.query(sqlQuery, mapperUser, id);
+        return jdbcTemplate.query(sqlQuery, userMapper, id);
     }
 
     @Override
     public List<User> getMutualFriends(int firstId, int secondId) {
-        final String sqlQuery = "select u.id, u.name, u.email, u.login, u.birthday " +
-                "from friends as f " +
-                "left join users as u on f.friend_id = u.id " +
-                "where f.user_id = ? " +
-                "and f.friend_id in (select friend_id from friends where user_id = ?) ";
+        final String sqlQuery = "SELECT u.id, u.name, u.email, u.login, u.birthday " +
+                "FROM friends as f " +
+                "LEFT JOIN users AS u ON f.friend_id = u.id " +
+                "WHERE f.user_id = ? " +
+                "AND f.friend_id IN (SELECT friend_id FROM friends WHERE user_id = ?) ";
         log.info("List of mutual friends {} and {} sent", firstId, secondId);
-        return jdbcTemplate.query(sqlQuery, mapperUser, firstId, secondId);
+        return jdbcTemplate.query(sqlQuery, userMapper, firstId, secondId);
     }
 }
