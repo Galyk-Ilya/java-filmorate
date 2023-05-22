@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,33 +9,29 @@ import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
-
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
+@Builder
+public class User {
 
-public class User extends Model {
+    private int id;
 
     @Email(message = "Email cannot be empty and must contain the @ symbol")
     private String email;
 
-    private String name;
-
     @NotBlank(message = "Login cannot be empty or contain spaces")
+    @Pattern(regexp = ".*\\S.", message = "Login must not contain spaces")
     private String login;
 
-    @Past(message = "user passed the test for Birthday")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthday;
+    private String name;
 
-    @JsonIgnore
-    private Set<Integer> friendsId = new HashSet<>();
+    @PastOrPresent(message = "Date of birth cannot be in the future")
+    private LocalDate birthday;
 }

@@ -1,60 +1,80 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserService extends AbstractService<User> {
+@RequiredArgsConstructor
+public class UserService {
 
-    @Autowired
-    public UserService(Storage<User> userStorage) {
-        entities = userStorage;
+    private final UserStorage userStorage;
+
+    public List<User> getAll() {
+        return userStorage.findAllUsers();
     }
 
-    @Override
-    protected void preSave(User user) {
+    public User create(User user) {
+        preSave(user);
+        return userStorage.createUser(user);
+    }
+
+    public User getUserById(Integer userId) {
+        User user = userStorage.get(userId).orElseThrow(() -> new NotFoundException("User is not found"));
+        log.debug("User with id {} found.", userId);
+        return user;
+    }
+
+    public User update(User user) {
+        preSave(user);
+        containsUser(user.getId());
+        return userStorage.update(user);
+    }
+
+    public void deleteUser(int id) {
+        containsUser(id);
+        userStorage.deleteUser(id);
+    }
+
+    public void addFriend(int userId, int friendId) {
+        containsUser(userId);
+        containsUser(friendId);
+        userStorage.addFriend(userId, friendId);
+        log.info(userId + " and " + friendId + " added to friends");
+    }
+
+    public void deleteFriend(int userId, int friendId) {
+        containsUser(userId);
+        containsUser(friendId);
+        userStorage.deleteFriend(userId, friendId);
+        log.info(userId + " and " + friendId + " removed from friends");
+    }
+
+    public List<User> getUserFriends(int userId) {
+        containsUser(userId);
+        return userStorage.getUserFriends(userId);
+    }
+
+    public List<User> getMutualFriends(int userId, int otherUserId) {
+        containsUser(userId);
+        containsUser(otherUserId);
+        return userStorage.getMutualFriends(userId, otherUserId);
+    }
+
+    private void preSave(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.debug("The name user field is set to login");
         }
     }
 
-    public void addFriend(int id, int friendId) {
-        if (entities.get(id) == null || entities.get(friendId) == null) {
-            throw new NotFoundException("Not found id:" + id + " or " + friendId);
-        }
-        entities.get(id).getFriendsId().add(friendId);
-        entities.get(friendId).getFriendsId().add(id);
-        log.info(id + " and " + friendId + " added to friends");
-    }
-
-    public void deleteFriend(int id, int friendId) {
-        if (entities.get(id) == null || entities.get(friendId) == null) {
-            throw new NotFoundException("Not found id:" + id + " or " + friendId);
-        }
-        entities.get(id).getFriendsId().remove(friendId);
-        entities.get(friendId).getFriendsId().remove(id);
-        log.info(id + " and " + friendId + " removed from friends");
-    }
-
-    public List<User> getFriends(int id) {
-        return entities.get(id).getFriendsId().stream()
-                .map(integer -> entities.get(integer))
-                .collect(Collectors.toList());
-    }
-
-    public List<User> getMutualFriends(int id, int otherId) {
-        return entities.get(id).getFriendsId().stream()
-                .filter(integer -> entities.get(otherId).getFriendsId().contains(integer))
-                .map(integer -> entities.get(integer))
-                .collect(Collectors.toList());
+    private void containsUser(int id) {
+        userStorage.get(id).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }
